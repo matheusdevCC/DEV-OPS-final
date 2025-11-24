@@ -1,9 +1,8 @@
-name: Build and Deploy Python App to Azure
+name: Python Deploy to Azure
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
   build_and_deploy:
@@ -13,27 +12,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install Oryx
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
         run: |
-          wget https://github.com/microsoft/Oryx/releases/download/2023-07-26.01/oryx-linux-musl-x64.tar.gz
-          tar -xzf oryx-linux-musl-x64.tar.gz -C /usr/local/bin
-          chmod +x /usr/local/bin/oryx
-          oryx --version
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: python -m unittest discover -p "test_*.py"
 
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Build with Oryx
-        run: |
-          oryx build . \
-            --platform python \
-            --platform-version 3.10 \
-            -o build_output
-
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: "srvprtdev01"
-          package: build_output
+          package: .
