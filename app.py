@@ -1,14 +1,15 @@
+import os
 from flask import Flask, jsonify, request
 from flasgger import Swagger
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 
 app = Flask(__name__)
 
-# JWT
-app.config['JWT_SECRET_KEY'] = 'your_secret_key'
+# JWT - agora usando variável de ambiente
+app.config['JWT_SECRET_KEY'] = os.getenv("JWT_SECRET_KEY", "local-default-secret")
 jwt = JWTManager(app)
 
-# Swagger
+# Swagger config
 swagger_template = {
     "swagger": "2.0",
     "info": {
@@ -77,5 +78,6 @@ def protected():
     """
     return jsonify(message="Protected route"), 200
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=1313)
+if __name__ == "__main__":
+    # debug para uso local
+    app.run(debug=True, host="0.0.0.0", port=5000)

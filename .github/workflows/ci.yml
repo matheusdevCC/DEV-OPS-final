@@ -1,40 +1,27 @@
-name: Python Deploy to Azure
+name: CI - Test Python App
 
 on:
   push:
     branches: ["main"]
+  pull_request:
 
 jobs:
-  build_and_deploy:
+  build_and_test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "3.11"
 
-      - name: Install dependencies for tests
-        run: pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
 
       - name: Run unit tests
-        run: python -m unittest discover -p "test_*.py"
-
-      # 🔥 ZIP CORRETO (SEM PASTA deploy/)
-      - name: Create ZIP package
         run: |
-          zip -r app.zip app.py requirements.txt
-
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: "srvprtdev01"
-          package: "app.zip"
+          python -m unittest discover -p "test_*.py"
