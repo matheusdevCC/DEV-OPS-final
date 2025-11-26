@@ -43,14 +43,15 @@ jobs:
     steps:
       - name: Perform production smoke tests
         run: |
-          echo "🔎 Validating production API..."
-          curl -I https://lab-apius-us-east-2.elasticbeanstalk.com || exit 1
-          echo "GET / OK"
+          echo "PRD funcional?? ..."
 
-          curl https://lab-apius-us-east-2.elasticbeanstalk.com/items || exit 1
-          echo "GET /items OK"
+          echo "▶ Teste /"
+          curl -I https://dev-ops-final.onrender.com || exit 1
 
-          curl -X POST https://lab-apius-us-east-2.elasticbeanstalk.com/login || exit 1
-          echo "POST /login OK"
+          echo "▶ Teste /items"
+          curl https://dev-ops-final.onrender.com/items || exit 1
 
-          echo "✅ Production environment validated successfully!"
+          echo "▶ Teste /login"
+          curl -X POST https://dev-ops-final.onrender.com/login || exit 1
+
+          echo "🎉 produção funcional"
